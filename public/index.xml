@@ -1,0 +1,1424 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+
+    <title>@anewg’s Blog</title>
+    <link>http://llo.io/</link>
+    <description>All entries on Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+    <lastBuildDate>Fri, 23 Sep 2016 17:53:08 +0800</lastBuildDate>
+    <atom:link href="http://llo.io/index.xml" rel="self" type="application/rss+xml" />
+    
+      
+      <item>
+        <title>Goutte使用记录</title>
+        <link>http://llo.io/post/Goutte%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/</link>
+        <pubDate>Fri, 23 Sep 2016 17:53:08 +0800</pubDate>
+        
+        <guid>http://llo.io/post/Goutte%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/</guid>
+        <description>&lt;p&gt;工作项目需要把前端抓取网页的部分改写到后端抓取，使用了 Goutte。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;设置header&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;      $header = array(\&#39;Origin: http://www.meilishuo.com\&#39;);
+      $this-&amp;gt;goutte_client-&amp;gt;getClient()-&amp;gt;setDefaultOption(\&#39;config/curl/\&#39;.CURLOPT_HTTPHEADER, $header);
+      // 与 curl 设置类似
+      $crawler = $this-&amp;gt;goutte_client-&amp;gt;request(\&#39;GET\&#39;, $url);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;过滤元素&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;      $title = $crawler-&amp;gt;filter(\&#39;title\&#39;)-&amp;gt;eq(0)-&amp;gt;text(); // 支持选择器写法
+      $html = $crawler-&amp;gt;html(); // 获取全部html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;模拟点击与提交表单&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;      $login_url = \&#39;http://login.m.taobao.com/login.htm?v=0&amp;amp;ttid=h5\&#39;;
+
+      $crawler = $this-&amp;gt;goutte_client-&amp;gt;request(\&#39;GET\&#39;, $login_url);
+      $form = $crawler-&amp;gt;selectButton(\&#39;登 录\&#39;)-&amp;gt;form();
+      $crawler = $this-&amp;gt;goutte_client-&amp;gt;submit($form, array(\&#39;TPL_username\&#39; =&amp;gt; \&#39;x\&#39;, \&#39;TPL_password\&#39; =&amp;gt; \&#39;y\&#39;));
+
+      var_dump($this-&amp;gt;goutte_client-&amp;gt;getCookieJar());
+      var_dump($this-&amp;gt;goutte_client-&amp;gt;getResponse()-&amp;gt;getHeaders());
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;像淘宝这种登录前要跑js的还是没辙，需要CasperJS 或 Selenium。&lt;/p&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>Refactoring with PhpStorm</title>
+        <link>http://llo.io/post/Refactoring-with-PhpStorm/</link>
+        <pubDate>Sat, 16 Apr 2016 13:11:23 +0800</pubDate>
+        
+        <guid>http://llo.io/post/Refactoring-with-PhpStorm/</guid>
+        <description>&lt;p&gt;change Signature&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;* To change the function name.
+
+* To add new parameters and remove the existing ones.
+
+* To assign default values to the parameters.
+
+* To reorder(重排) parameters.
+
+* To change parameter names.
+
+* To propagate(传播) new parameters through the function call hierarchy.
+
+* Tips:
+
+    * For each new parameter added to a function, you can specify its default value (or an expression) in the `Default` field.
+
+    * Extract
+
+* Extract Field
+
+```php
+//Before
+public static function find($params){
+if (isset($params[\&#39;param_query\&#39;])) {
+    $result = MyDatabase::execute($params[\&#39;param_query\&#39;]);
+    }
+}
+
+public static function findAll($params){
+if (isset($params[\&#39;param_query\&#39;])) {
+    $result = MyDatabase::executeAll($params[\&#39;param_query\&#39;]);
+    }
+}
+
+//After
+public static
+$query = \&#39;param_query\&#39;;
+
+public static function find($params){
+if (isset($params[self::$query])) {
+    $result = MyDatabase::execute($params[self::$query]);
+    }
+}
+
+public static function findAll($params){
+if(isset($params[self::$query])){
+    $result = MyDatabase::executeAll($params[self::$query]);
+    }
+}
+```
+* Extract Constant &amp;amp; Interface &amp;amp; Method &amp;amp; Parameter &amp;amp; Variable
+
+* Inline refactoring is opposite to Extract
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Pull Members up(down) refactoring allows you to move class members to a superclass .&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Rename &amp;amp; Safe Delete&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>二维码在线编辑并通过热敏打印机打印</title>
+        <link>http://llo.io/post/%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%9C%A8%E7%BA%BF%E7%BC%96%E8%BE%91%E5%B9%B6%E9%80%9A%E8%BF%87%E7%83%AD%E6%95%8F%E6%89%93%E5%8D%B0%E6%9C%BA%E6%89%93%E5%8D%B0/</link>
+        <pubDate>Wed, 02 Mar 2016 12:57:30 +0800</pubDate>
+        
+        <guid>http://llo.io/post/%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%9C%A8%E7%BA%BF%E7%BC%96%E8%BE%91%E5%B9%B6%E9%80%9A%E8%BF%87%E7%83%AD%E6%95%8F%E6%89%93%E5%8D%B0%E6%9C%BA%E6%89%93%E5%8D%B0/</guid>
+        <description>&lt;p&gt;使用 jquery 插件在前端画出 svg 图像后,首先通过 html5 的 canvas 的 toDataURL 方法转成 base64 编码的图像数据，通过 ajax 上传 logo 与 base64 数据。后台接收后合并两图像。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;图片要转成 BMP 格式。BMP 格式根据文件头信息不同数据组成也不同，我的是24位BMP，去除头文件54个字节后，每三个字节表示一个点(RGB),合并RGB后二值化像素点，就可以打印了。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;特别注意PHP的十六进制表示：&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;1.‘\xFE’ 表示的是4个字符&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;2.“\xFE” 表示的是1个字符(即该16进制数字对应的ascii码字符)&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;PS:使用到的相关函数有unpack(),chr()&lt;/p&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>Debug and Test</title>
+        <link>http://llo.io/post/Debug-and-Test/</link>
+        <pubDate>Sun, 03 Jan 2016 17:43:14 +0800</pubDate>
+        
+        <guid>http://llo.io/post/Debug-and-Test/</guid>
+        <description>&lt;p&gt;chrome:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;查找函数定义：在Js调试界面里：`Ctrl + Shift + o`
+
+查找文件：在Js调试界面里：`Ctrl + o`
+
+全局查找：`Cmd + option + f`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;PHPUnit&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;多个同时测试
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;  class Add
+  {
+      protected $_num1 = 0, $_num2 = 0;
+      public function setNum1($num)
+      {
+          $this-&amp;gt;_num1 = (int) $num;
+      }
+      public function setNum2($num)
+      {
+          $this-&amp;gt;_num2 = (int) $num;
+      }
+      public function getResult()
+      {
+          return $this-&amp;gt;_num1 + $this-&amp;gt;_num2;
+      }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;测试源码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;  require_once \&#39;PHPUnit/Framework/TestCase.php\&#39;;
+  require_once \&#39;Add.php\&#39;;
+
+  class AddTest extends PHPUnit_Framework_TestCase
+  {
+      /**
+       * @dataProvider provider
+       */
+      public function testAdd($num1,$num2,$expection)
+      {
+          $add = new Add();
+          $add-&amp;gt;setNum1($num1);
+          $add-&amp;gt;setNum2($num2);
+          $this-&amp;gt;assertEquals($expection,$add-&amp;gt;getResult());
+      }
+
+      public function provider()
+      {
+          return array(
+              array(0,0,0),
+              array(0,1,1),
+              array(1,0,1),
+              array(1,1,3)   //false
+          );
+      }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;对应该是错误情况的测试&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;  require_once \&#39;PHPUnit/Framework/TestCase.php\&#39;;
+
+  class ExceptionTest extends PHPUnit_Framework_TestCase
+  {
+      /**
+       * @expectedException InvalidArgumentException
+       */
+      public function testException()  //这里的代码应该抛出异常才是通过测试
+      {
+          //throw new IncalidArgumentException(\&#39;Test\&#39;); 有这个通过，没这个false
+      }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;执行顺序：&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;setUp() -&amp;gt; func1() -&amp;gt; tearDown() -&amp;gt; setUp() -&amp;gt; func2() ...&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;为每个测试方法准备同一个资源，省去分别在每个函数中建立的成本&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;  require_once \&#39;PHPUnit/Framework.php\&#39;;
+
+  class ArrayTest extends PHPUnit_Framework_TestCase
+  {
+      protected $fixture;
+
+      protected function setUp()
+      {
+          $this-&amp;gt;fixture = array();  //不清除的话可以和其他class共用
+      }
+
+      public function func1()
+      {
+      }
+
+      public function func2()
+      {
+      }
+
+      protected function tearDown()
+      {
+          unset($this-&amp;gt;fixture);
+      }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;同性质的包组合起来测试&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;  # file Package/Class1Test.php
+  require_once \&#39;PHPUnit/Framework.php\&#39;;
+
+  class Package_Class1Test extends PHPUnit_Framework_TestCase
+  {
+      public function test1()
+      {
+         //...
+      }
+
+      public function test2()
+      {
+         //...
+      }
+  }
+
+  # file Package/Class2Test.php
+  require_once \&#39;PHPUnit/Framework.php\&#39;;
+
+  class Package_Class2Test extends PHPUnit_Framework_TestCase
+  {
+      public function test3()
+      {
+         //...
+      }
+
+      public function test4()
+      {
+         //...
+      }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;测试源码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;  require_once \&#39;PHPUnit/Framework/TestCase.php\&#39;;
+  require_once \&#39;Package/Class1Test.php\&#39;;
+  require_once \&#39;Package/Class2Test.php\&#39;;
+
+  class AddTest extends PHPUnit_Framework_TestCase
+  {
+      public static function suite()
+      {
+          $suite = new PHPUnit_Framework_TestSuite(\&#39;Package\&#39;);
+          $suite-&amp;gt;addTestSuite(\&#39;Package_Class1Test\&#39;);
+          $suite-&amp;gt;addTestSuite(\&#39;Package_Class2Test\&#39;);
+          return $suite;
+      }
+
+      protected function setUp()
+      {
+          $this-&amp;gt;fixture = array();
+      }
+
+      protected function tearDown()
+      {
+          unset($this-&amp;gt;fixture);    //这里的setUp和tearDown是在最开始和最后执行的，各个文件中的setUp和tearDown在其中运行
+      }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;PHPUnit中，注解也是有用处的。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;备用套件：SimpleTest&lt;/p&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>redis</title>
+        <link>http://llo.io/post/redis/</link>
+        <pubDate>Sun, 30 Aug 2015 11:15:12 +0800</pubDate>
+        
+        <guid>http://llo.io/post/redis/</guid>
+        <description></description>
+      </item>
+      
+    
+      
+      <item>
+        <title>sql</title>
+        <link>http://llo.io/post/sql/</link>
+        <pubDate>Sun, 23 Aug 2015 18:05:50 +0800</pubDate>
+        
+        <guid>http://llo.io/post/sql/</guid>
+        <description>
+
+&lt;h1 id=&#34;范式&#34;&gt;范式：&lt;/h1&gt;
+
+&lt;p&gt;名词定义：主属性（在主键中的属性），其余的都是非主属性&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;第一范式：数据项不可分隔。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;第二范式：主键到每一个非主属性都是完全函数依赖&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;第三范式：消除第二范式基础上的非主属性间的传递依赖&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;BCNF 范式：满足第三范式的情况下，作为决定因素的属性一定要在码当中。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;第四范式：在BCNF下，消除多值依赖&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;日志&#34;&gt;日志&lt;/h1&gt;
+
+&lt;p&gt;1.二进制日志&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;log_bin = /var/log/...mysql-bin.log&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;2、错误日志&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;log_error=\&amp;quot;...errorlog.log\&amp;quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;3、更新日志&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;log_update=\&amp;quot;...updatelog.log\&amp;quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;4、慢查询日志&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;log_show_queries = \&amp;quot;...\&amp;quot;    #保存日志的路径和文件名，确保权限可写
+long_query_time = 2           #超过多少秒则保存查询数据
+log-queries-not-using-indexs  #记录不使用索引的
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;常用语句&#34;&gt;常用语句&lt;/h1&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;返回MySQL服务器状态信息 &lt;code&gt;show status&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;显示所有可用show语句 &lt;code&gt;help show&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;查看表结构 &lt;code&gt;describe table_name&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;显示建表(库)信息 &lt;code&gt;show create table(database) XXX&lt;/code&gt; 返回的AUTO_INCREMENT为当前最大值+1&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;复制表结构 &lt;code&gt;create table t3 like t1&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;复制表数据 &lt;code&gt;insert into t3 select * from t1&lt;/code&gt; 索引不会复制&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;刷新二进制日志 &lt;code&gt;FLUSH LOGS&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;刷新权限 &lt;code&gt;FLUSH PRIVILEGES&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;刷新所有表 &lt;code&gt;flush tables&lt;/code&gt; 主从同步时 &lt;code&gt;flush tables with read lock&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;快速重建表 &lt;code&gt;repair table table_name quick&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;修改表属性 &lt;code&gt;ALTER (IGNORE)TABLE table_name ...&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;存储IP地址 &lt;code&gt;select inet_aton(ip) from table_name&lt;/code&gt; 转回用 &lt;code&gt;ntoa&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;join&#34;&gt;Join&lt;/h1&gt;
+
+&lt;p&gt;基本语法：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;`a LEFT JOIN b USING (c1,c2,c3)`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;等价于&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;`a LEFT JOIN b ON a.c1=b.c1 AND a.c2=b.c2 AND a.c3=b.c3 where ...`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;几种 JOIN 方式&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;INNER JOIN&lt;/code&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Select A.Name,B.Hobby from A, B where A.id = B.id&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Select A.Name,B.Hobby from A INNER JOIN B ON A.id = B.id&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;LEFT or RIGHT JOIN&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Select A.Name,B.Hobby from A Left JOIN B ON A.id = B.id&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Select A.Name,B.Hobby from B Right JOIN A ON A.id = B.id&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;保留所有 A 表中联结字段的记录，若无与其相对应的 B 表中的字段记录则留空&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;NATURAL JOIN&lt;/code&gt; 默认是两个表中同名字段完全匹配（a.id=b.id,a.name=b.name….）的 &lt;code&gt;INNER JOIN&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;FULL OUTER JOIN&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;并集，两方互相没有匹配到的都用Null替代，MySQL 并不支持 &lt;code&gt;FULL OUTER JOIN&lt;/code&gt;，但是我们可以使用LEFT JOIN 和 RIGHT JOIN 两者的结果 UNION 来实现这一功能。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>javascript</title>
+        <link>http://llo.io/post/javascript/</link>
+        <pubDate>Thu, 15 Jan 2015 12:59:49 +0800</pubDate>
+        
+        <guid>http://llo.io/post/javascript/</guid>
+        <description>
+
+&lt;h1 id=&#34;原型链&#34;&gt;原型链&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://llo.io/image/prototype.jpg&#34; alt=&#34;javascript&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;图片来自：&lt;a href=&#34;https://github.com/kzangv&#34;&gt;kzangv&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;图片说明&#34;&gt;图片说明&lt;/h3&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;总共三类对象-蓝色大框&#34;&gt;总共三类对象(蓝色大框)&lt;/h4&gt;
+
+&lt;p&gt;1.&lt;strong&gt;实例对象&lt;/strong&gt;（通过new XX() 所得到的实例），跟原型链相关的只有 &lt;code&gt;__proto__&lt;/code&gt; 属性，指向其对应的原型对象 &lt;code&gt;*.prototype&lt;/code&gt; 。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;2.&lt;strong&gt;构造函数对象&lt;/strong&gt; 分原生和自定义两类。跟原型链相关的有 &lt;code&gt;__proto__&lt;/code&gt; 属性，除此之外还有 &lt;code&gt;prototype&lt;/code&gt; 属性。&lt;code&gt;__proto__&lt;/code&gt; 属性都是指向 &lt;code&gt;Function.prototype&lt;/code&gt; 这个原型对象的。&lt;code&gt;prototype&lt;/code&gt; 则是指向对应的原型对象。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;3.&lt;strong&gt;原型对象&lt;/strong&gt; 除了一样拥有 &lt;code&gt;__proto__&lt;/code&gt; 外，也拥有独有的属性 &lt;code&gt;constructor&lt;/code&gt; 。它的&lt;code&gt;__proto__&lt;/code&gt; 指向的都是 &lt;code&gt;Object.prototype&lt;/code&gt; ，除了 &lt;code&gt;Object.prototype&lt;/code&gt; 本身，它自己是指向 &lt;code&gt;null&lt;/code&gt; 。而 &lt;code&gt;constructor&lt;/code&gt; 属性指向它们对应的构造函数对象。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;arguments-参数&#34;&gt;arguments 参数&lt;/h1&gt;
+
+&lt;p&gt;它是对象，不是数组，使用 &lt;code&gt;Array.prototype.slice.call(arguments)&lt;/code&gt; 转为数组&lt;/p&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>php</title>
+        <link>http://llo.io/post/php/</link>
+        <pubDate>Mon, 12 Jan 2015 19:32:35 +0800</pubDate>
+        
+        <guid>http://llo.io/post/php/</guid>
+        <description>
+
+&lt;h1 id=&#34;session&#34;&gt;Session&lt;/h1&gt;
+
+&lt;p&gt;设置个30分钟的session:&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;1.设置php.ini的session.gc_maxlifetime&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;但是PHP是用一定的概率来运行session的gc，不能保证一定运行，而且假设5分钟前设置了一个a=1, 5分钟后又设置了一个b=2, 那么这个Session文件的修改时间为添加b时刻的时间, 那么a就不能在30分钟的时候被清除。还有，如果有俩个应用都没有指定自己独立的save_path（两个都存在默认路径）, 一个设置了过期时间为2分钟(假设为A), 一个设置为30分钟(假设为B), 那么每次当A的Session gc运行的时候, 就会同时删除属于应用B的Session files.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;2.设置session载体cookie，session.cookie_lifetime&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;但可以被抓包后修改发送，不严谨.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;3.自己为每一个Session值增加Time stamp.每次访问之前, 判断时间戳.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;二进制安全&#34;&gt;二进制安全&lt;/h1&gt;
+
+&lt;p&gt;「binary safe」 的函数会把它的输入字符串原封不动的进行处理；&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;而非 「binary safe」 的函数是在底层直接调用C的字符串相关的函数，而这些函数处理字符串会把NULL后边的内容忽略掉。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;如果函数strlen是binary safe的话，我们将得到7；如果函数是非binary safe的话，我们将得到3&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;==================================
+$str = \&amp;quot;abcx00abc\&amp;quot;; //x00为NULL
+echo strlen($str);  //7
+==================================
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;require-include&#34;&gt;Require &amp;amp; Include&lt;/h1&gt;
+
+&lt;p&gt;首次判断是否绝对路径， 如果是则跳过include_path进行解析&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;再次判断是否相对路径 （./file, ../dir/file），基点永远是当前工作目录（运行脚本的目录)&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;最后判断include_path列表&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;正则表达式&#34;&gt;正则表达式&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;#(?&amp;lt;=c)d(?=e)#&lt;/code&gt; &amp;nbsp;&amp;nbsp;d前面紧跟c, d 后面紧跟e，满足的string匹配出d&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;sso&#34;&gt;SSO&lt;/h1&gt;
+
+&lt;p&gt;每个站点, 设置用户验证中心（&lt;code&gt;center.php&lt;/code&gt;）&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;在A站登录成功后，跳转到A站的 &lt;code&gt;center.php&lt;/code&gt; 设置 &lt;code&gt;token&lt;/code&gt;(cookie为载体），并将信息入库&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;在 &lt;code&gt;center.php&lt;/code&gt; 的 html 部分，向其他站（如B站，C站&amp;hellip;）的对应处理中心（&lt;code&gt;client.php&lt;/code&gt;）发送 &lt;code&gt;get&lt;/code&gt; 请求（iframe 为载体），附带 &lt;code&gt;token&lt;/code&gt; 参数&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;其他站的&lt;code&gt;client.php&lt;/code&gt; 接收到 &lt;code&gt;token&lt;/code&gt; 后（可经数据库）验证，成功后在 iframe 内设置该站的 cookie&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;PS：IE下要加P3P头&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;生成base64&#34;&gt;生成Base64&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;function data_uri($file, $mime) {
+  $contents=file_get_contents($file);
+  $base64=base64_encode($contents);
+  echo \&amp;quot;data:$mime;base64,$base64\&amp;quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>git</title>
+        <link>http://llo.io/post/git/</link>
+        <pubDate>Tue, 23 Dec 2014 14:08:23 +0800</pubDate>
+        
+        <guid>http://llo.io/post/git/</guid>
+        <description>
+
+&lt;p&gt;设置git默认编辑器：&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git config --global core.editor \&amp;quot;/usr/local/bin/vim\&amp;quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;全局设置：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config --global user.name xxx ；
+git config --global user.email \&amp;quot;xxx@xxx.com\&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;要忽略的文件：&lt;code&gt;.gitignore&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;基本&#34;&gt;基本&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;git init&lt;/code&gt; 新仓库&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git clone /path/to/repository [repository_dir_name]&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git status&lt;/code&gt; –&amp;gt; 查看当前缓冲区状态 或 查看哪些文件出现冲突&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git mv oldfile.txt newfile.txt&lt;/code&gt; 缓冲区和工作目录同时更改&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git show HEAD~4&lt;/code&gt; 查看 前前前前 一版修改的資料&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git blame filename&lt;/code&gt; 查看文件修改记录&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git add .(*|filename)&lt;/code&gt;  add将内容读入暂存区。修改完冲突也要add，才会记录到stage。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git rm --cached FILENAME&lt;/code&gt;  取消跟踪但不删除工作目录的文件&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;扩展：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git add -u&lt;/code&gt; 只加修改過的檔案, 新增的檔案不加入.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git add -i&lt;/code&gt; 進入交互模式&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git commit -m \&amp;quot;代码提交信息\&amp;quot;&lt;/code&gt; 此时已经在本地的HEAD，但未提交到远端&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git commit --amend&lt;/code&gt; 修改上一次的 commit 訊息。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git commit --amend 檔案1 檔案2...&lt;/code&gt; 將檔案1、檔案2加入上一次的 commit。&lt;/p&gt;
+
+&lt;h2 id=&#34;分支&#34;&gt;分支&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;git checkout -b somename&lt;/code&gt;  创建分支并立即切换过去&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git branch -d deletename&lt;/code&gt;  强制删除分支&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git branch -f master HEAD~3&lt;/code&gt; 单独前移某分支(当前 HEAD 不变)&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;扩展：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git branch&lt;/code&gt; 列出目前有多少分支&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git branch new-branch master&lt;/code&gt; 由 master 產生新的 branch&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git diff &amp;lt;source_branch&amp;gt; &amp;lt;target_branch&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git merge &amp;lt;branch&amp;gt;&lt;/code&gt; 合并某分支到当前所在分支&lt;/p&gt;
+
+&lt;h2 id=&#34;比较&#34;&gt;比较&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;git diff --cached&lt;/code&gt; 比較 staging area 與 Repository 差異&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git diff HEAD&lt;/code&gt; 比較目前位置(工作目录) 與 Repository 差別&lt;/p&gt;
+
+&lt;h2 id=&#34;rebase&#34;&gt;rebase：&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git checkout A
+$ git rebase B
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A以B作为基点，命令会把你的A分支里的每个提交(commit)取消掉，并且把它们临时保存为补丁(patch),切到”B”分支，最后把保存的这些补丁应用到”B”分支上。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;$ git rebase --abort&lt;/code&gt; A分支会回到rebase开始前的状态。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;rebase过程中的冲突解决：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git add -u
+git rebase --continue
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有冲突继续解决，重复这这些步骤，直到rebase完成。&lt;/p&gt;
+
+&lt;h2 id=&#34;远程&#34;&gt;远程&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;git pull&lt;/code&gt; 拉远端数据之后合并更新&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git remote -v&lt;/code&gt; 查看远端分支在本地的情况&lt;/p&gt;
+
+&lt;h2 id=&#34;冲突&#34;&gt;冲突&lt;/h2&gt;
+
+&lt;p&gt;解决冲突后 &lt;code&gt;git add &amp;lt;filename&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;标签&#34;&gt;标签&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;git tag 1.0.0 1b2e1d63ff(ID)&lt;/code&gt;  获取ID用 &lt;code&gt;git log&lt;/code&gt;命令&lt;/p&gt;
+
+&lt;h2 id=&#34;回退&#34;&gt;回退&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;git revert HEAD&lt;/code&gt;  回复工作目录到上次提交时，commit增加一项 revert 的记录，相当与一次新提交&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git fetch origin;
+git reset --hard origin/master 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;彻底刷新成远端服务器最新版本（origin那里的master），丢弃本地&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git ls-files -d&lt;/code&gt; 查看已刪除的檔案&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git ls-files -d | xargs git checkout --&lt;/code&gt;  將已刪除的檔案還原&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;扩展：&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;缓存区就是提交时要发送的文件（附带文件的更改） 或 要发送的文件的当前状态（未提交时）&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git checkout HEAD(-f) hello.txt&lt;/code&gt; 从指定commit中检出，工作目录变化。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git checkout (—) hello.txt&lt;/code&gt; 从缓存区取得（add但没commit的数据），缓存区没变。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git reset --mixed&lt;/code&gt; 本地文件未发生改变（&lt;code&gt;—hard&lt;/code&gt; 时才会），缓存区和commit变化&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git reset --soft&lt;/code&gt; 只恢复 commit,而保留 (当前)工作目录 和 (当前)缓存区 的状态&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git reset --hard&lt;/code&gt; 彻底回复&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;扩展：&lt;/p&gt;
+
+&lt;p&gt;在之前的版本创建分支 &lt;code&gt;git branch test_branch -v old_commit_id&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git reflog；
+git checkout some_commit_id
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;grep&#34;&gt;Grep&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;git grep \&amp;quot;te\&amp;quot; v1&lt;/code&gt;  查 v1 是否有 “te” 的字串&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git grep \&amp;quot;te\&amp;quot;&lt;/code&gt; 查現在版本是否有 “te” 的字串&lt;/p&gt;
+
+&lt;h2 id=&#34;二分排错法&#34;&gt;二分排错法&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;git bisect start
+git bisect good f608824 //first commit
+git bisect bad master   //HEAD
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;会转到两者之间的提交点，如果检查没错输入 &lt;code&gt;git bisect good&lt;/code&gt; 反之输入 &lt;code&gt;git bisect bad&lt;/code&gt; 继续二分下去&lt;/p&gt;
+
+&lt;h2 id=&#34;cherry-pick&#34;&gt;cherry-pick：&lt;/h2&gt;
+
+&lt;p&gt;From:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;A-B  master
+   \\
+    C-D-E-F-G topic
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;A-B-D-F  master
+       \\
+        C-E-G topic
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以上的实现步骤：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git checkout master
+git cherry-pick D
+git cherry-pick F
+git checkout topic
+git rebase master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;暫存操作-stash&#34;&gt;暫存操作(stash)&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;git stash&lt;/code&gt; 將目前所做的修改都暫存起來。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git stash apply&lt;/code&gt; 取出最新一次的暫存。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git stash pop&lt;/code&gt; 取出最新一次的暫存並將他從暫存清單中移除。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git stash list&lt;/code&gt; 顯示出所有的暫存清單。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git stash clear&lt;/code&gt; 清除所有暫存。&lt;/p&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>nginx</title>
+        <link>http://llo.io/post/nginx/</link>
+        <pubDate>Mon, 03 Nov 2014 15:18:40 +0800</pubDate>
+        
+        <guid>http://llo.io/post/nginx/</guid>
+        <description>
+
+&lt;h1 id=&#34;指令&#34;&gt;指令&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;选择配置文件启动 &lt;code&gt;.../sbin/nginx -c xx.conf&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;平滑停止 &lt;code&gt;kill - QUIT Nginx_master_pid&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;平滑重启 &lt;code&gt;kill - HUB Nginx_master_pid&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;快速停止 &lt;code&gt;kill - TERM Nginx-master_pid&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;强制停止 &lt;code&gt;pkill -9 nginx&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;其他控制信号：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;USR1 - 重新打开日志文件，用于日志切割&lt;/li&gt;
+&lt;li&gt;USR2 - 平滑升级可执行程序&lt;/li&gt;
+&lt;li&gt;WINCH - 平滑关闭工作进程&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;虚拟主机&#34;&gt;虚拟主机&lt;/h1&gt;
+
+&lt;p&gt;一个虚拟主机的一个server段&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http
+{
+    server
+    {
+        listen 192.168.8.43:80   //区分IP
+        server_name a.com //区分域名
+        access_log ...
+        location /
+        {
+            index index.html index.htm
+            root /...
+        }
+    }
+    server
+    {
+        listen 192.168.8.44:80
+        server_name b.com
+        access_log ...
+        location /
+        {
+            index index.html index.htm
+            root /...
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;负载均衡&#34;&gt;负载均衡&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;upstream php_pool {
+    //如果使用了ip_hash指令(根据ip定位服务器)
+    //如果要突然去掉某个服务器要在最后加 &#39;down&#39; , 否则会影响之前 hash 运算结果，对session造成问题
+    server 192.168.8.1:3128 weight=5 max_fails=2 fail_timeout=30s;
+    ...
+}
+
+upstream bbs_pool {
+    ...
+}
+
+server{
+    proxy_next_upstream
+    proxy_pass
+    proxy_set_header X-Forwarded-For $remote_addr;
+    client_max_body_size 300m    #允许客户端请求的最大单个文件字节数
+    client_body_buffer_size 128k #代理请求的最大字节数
+    proxy_connect_timeout 600    #跟后端服务器连接超时时间
+    proxy_read_timeout 600       #后端排队超时时间
+    proxy_send_timeout 600       #后端回传数据超时时间
+    proxy_buffer_size 16k        #代理请求缓存区，缓存头信息
+    proxy_buffers 4 32k
+    proxy_busy_buffers_size 64k
+    proxy_temp_file_write_size 64k #proxy缓存临时文件大小
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;静态文件缓存&#34;&gt;静态文件缓存&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;location ~ .*\\.(gif|jpg...)$
+{
+    proxy_cache cache_one;
+    proxy_cache_valid 200 10m; //m -&amp;gt; minute
+    proxy_cache_valid 304 1m;
+    proxy_cache_valid 301 302 1h;
+    proxy_cache_valid any 1m;
+    proxy_cache_key $host$uri$is_args$args;
+    proxy_set_header
+    proxy_pass
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;重定向&#34;&gt;重定向&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;rewrite ^/html/tagindex/.*$ http://$host permanent&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Nginx和Apache的rewrite规则对比：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[L]换成last
+RewriteCond 对应 if
+[R]换成redirect
+[P]换成last
+[R,L] 换成 redirect （302）//[r=302]
+[P,L] 换成 last
+[PT,L] 换成 last
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Nginx文件目录匹配：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;if (!-e $request_filename)
+* -f和!-f用来判断是否存在文件
+* -d和!-d用来判断是否存在目录
+* -e和!-e用来判断是否存在文件或目录
+* -x和!-x用来判断文件是否可执行
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;访问控制&#34;&gt;访问控制&lt;/h1&gt;
+
+&lt;p&gt;与Apache不同，跟书写顺序有关，只要IP匹配成功一条，后面的就失效&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;location / {
+    //这里将永远输出403错误。
+    deny all;
+    //这些指令不会被启用，因为到达的连接在第一条已经被拒绝
+    deny 192.168.1.1;
+    allow 192.168.1.0/24;
+    allow 10.1.1.0/1
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;一份配置实例&#34;&gt;一份配置实例&lt;/h1&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;注意&lt;code&gt;cgi.fix_pathinfo=0&lt;/code&gt;,如果pathinfo必须设为1的话，可配合&lt;code&gt;try_files $fastcgi_script_name =404;&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# 使用的用户和组
+user www www;
+
+# 指定工作衍生进程数（一般等于cpu的总核数或总核数的两倍）
+worker_processes 8;
+
+# 定义错误日志存放的路径，错误日志的级别可选为:[debug | info | notice | warn | error | crit]
+error_log /data1/logs/nginx_error.log crit;
+
+# 指定pid存放路径
+pid /usr/local/nginx/nginx.pid
+
+# 指定文件描述符数量
+worker_rlimit_nofile 100000;
+
+events
+{
+  # 使用的网络I/O模型，Linux系统推荐使用epoll模型，FreeBSD推荐kqueue模型
+  Use epoll;
+  #允许使用的链接数
+  Worker_connections 2048;
+  # multi_accept on;
+  }
+
+http
+{
+  inlcude mime.types;
+  #设定mime类型,类型由mime.type文件定义 include /etc/nginx/mime.types;
+  
+  default_type application/octet-stream;
+  
+  # 设置使用的字符集，推荐不随便设置，程序员在html代码中meta标签设置
+  #charset utf-8;
+  
+  server_names_hash_bucket_size 128;
+  client_header_buffer_size 32k;
+  large_client_header_buffers 4 32k;
+  
+  #设置客户端能够上传的文件大小
+  client_max_body_size 8m;
+  
+  sendfile on;
+  # sendfile 如果用来进行下载等应用磁盘IO重负载应用，可设置为 off
+  tcp_nopush on;
+  
+  keepalive_timeout 60;
+  tcp_nodelay on;
+  
+  server_tokens off;
+  
+  tcp_nopush on;
+  # 告诉nginx在一个数据包里发送所有头文件，而不一个接一个的发送
+ 
+  #开启gzip压缩
+  #gzip on;
+  #gzip_min_length 1k;
+  #gzip_buffers 4 16k;
+  #gzip_http_version 1.1;
+  #gzip_comp_level 4;
+  #gzip_types text/plain application/x-javascript text/css application/xml;
+  #gzip_vary on; # 给代理服务器用，根据需要决定
+  
+  #设定请求缓冲
+  client_header_buffer_size    1k;
+  large_client_header_buffers  4 4k;
+  
+  include /etc/nginx/conf.d/*.conf;
+  include /etc/nginx/sites-enabled/*;
+  
+  #设定负载均衡的服务器列表
+  upstream mysvr {
+    #weigth参数表示权值，权值越高被分配到的几率越大
+    #本机上的Squid开启3128端口
+    server 192.168.8.1:3128 weight=5;
+    server 192.168.8.2:80  weight=1;
+    server 192.168.8.3:80  weight=6;
+  }
+  
+  upstream mysvr2 {
+    #weigth参数表示权值，权值越高被分配到的几率越大
+    server 192.168.8.x:80  weight=1;
+    server 192.168.8.x:80  weight=6;
+  }
+  
+  server
+  {
+  
+    listen 80;
+    server_name www.test.com test.com;
+    index index.html index.htm;
+    root /usr/htdocs;
+    
+    location / {
+        try_files $uri $uri/ /index.php; 
+        # 检查文件是否存在 try_files path1 [path2] (url|=code)
+        # try_files $uri $uri/ /index.php?$args;
+    }
+    
+    # 定义错误提示页面？
+    error_page   500 502 503 504 /50x.html;  
+    location = /50x.html {
+        root   /root;
+    }
+    
+    location ~ \\.php$ {
+        if ( $fastcgi_script_name ~ ..*/.*php ) {
+            return 403;
+        }
+        
+        fastcgi_pass 127.0.0.1:9000;
+        
+        #fastcgi_index index.php;
+        #fastcgi_param SCRIPT_FILENAME /var/www/nginx-default$fastcgi_script_name;
+        #include /etc/nginx/fastcgi_params;
+        
+        try_files $uri =404;
+        include fastcgi.conf;  
+        # fastcgi.conf 里面已定义了 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;      
+    }
+    
+    location ~ .*\\.(gif|jpg|jpeg|png|bmp|swf)$
+    {
+        expires 30d;
+    }
+    
+    location ~ .*\\.(js|css)$
+    {
+        expires 1h;
+    }
+    
+    #设定查看Nginx状态的地址
+    location /NginxStatus {
+        stub_status           on;
+        access_log            on;
+        auth_basic            \&amp;quot;NginxStatus\&amp;quot;;
+        auth_basic_user_file  conf/htpasswd;
+    }
+    #禁止访问 .htxxx 文件
+    location ~ /\\.ht {
+        deny all;
+    }
+    
+    #对aspx后缀的进行负载均衡请求
+    location ~ .*\\.aspx$ {
+    
+          root   /usr/htdocs;                     #定义服务器的默认网站根目录位置
+          index index.php index.html index.htm;   #定义首页索引文件的名称
+          
+          proxy_pass  http://mysvr;      #请求转向 mysvr|php|bbs 定义的服务器列表
+          
+          #proxy_next_upstream http_502 http_504 error timeout invalid header; 出现这些情况转到池中下一台
+          #proxy_redirect http://a.com:9080/ /  把所有\&amp;quot;http://a.com:9080/\&amp;quot;的内容替换成\&amp;quot;/\&amp;quot;,消除端口号对代理的影响
+          proxy_redirect off;
+          
+          #后端的Web服务器可以通过X-Forwarded-For获取用户真实IP
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          client_max_body_size 10m;      #允许客户端请求的最大单文件字节数
+          client_body_buffer_size 128k;  #缓冲区代理缓冲用户端请求的最大字节数，
+          proxy_connect_timeout 90;      #nginx跟后端服务器连接超时时间(代理连接超时)
+          proxy_send_timeout 90;         #后端服务器数据回传时间(代理发送超时)
+          proxy_read_timeout 90;         #连接成功后，后端服务器响应时间(代理接收超时)
+          proxy_buffer_size 4k;          #设置代理服务器（nginx）保存用户头信息的缓冲区大小
+          proxy_buffers 4 32k;           #proxy_buffers缓冲区，网页平均在32k以下的话，这样设置
+          proxy_busy_buffers_size 64k;   #高负荷下缓冲大小（proxy_buffers*2）
+          proxy_temp_file_write_size 64k;#设定缓存文件夹大小，大于这个值，将从upstream服务器传
+    }
+    
+    access_log /data1/logs/access.log access; #设定本虚拟主机(server)的访问日志
+    
+  }
+  
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>apache</title>
+        <link>http://llo.io/post/apache/</link>
+        <pubDate>Mon, 13 Oct 2014 16:21:34 +0800</pubDate>
+        
+        <guid>http://llo.io/post/apache/</guid>
+        <description>
+
+&lt;h1 id=&#34;ubuntu-下的命令&#34;&gt;Ubuntu 下的命令：&lt;/h1&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;切换模块
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;`sudo a2enmod rewrite`  开启 apache 的 rewrite 功能
+`sudo a2dismod rewrite` 禁用模块
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;切换站点&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;`a2ensite sites-available里的文件名`
+`a2dissite sites-available里的文件名`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;控制命令 apachectl or httpd&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;`apachectl -k graceful` – 平滑重启
+`apachectl -k graceful-stop` – 平滑停止
+`httpd -v` 显示当前服务器版本
+`httpd -V` 显示编译apache时的编译设定
+`httpd -l` 显示已编译进apache内核的模块
+`httpd -f ./config.conf` 以指定的配置文件启动
+`httpd -L` 显示有效的配置文件**指令**清单
+`httpd -D` 附加参数 附带附加参数启动 `&amp;lt;IfDefine&amp;gt;&amp;lt;/IfDefine&amp;gt;`
+`apachectl configtest` 测试配置文件
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;指令处理顺序&#34;&gt;指令处理顺序&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;Directory&amp;gt;&lt;/code&gt;(除了正则表达式)和&lt;code&gt;.htaccess&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;DirectoryMatch&amp;gt;&lt;/code&gt;(和&lt;code&gt;&amp;lt;Directory ~&amp;gt;&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;Files&amp;gt;&lt;/code&gt;和&lt;code&gt;&amp;lt;FilesMatch&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;Location&amp;gt;&lt;/code&gt;和&lt;code&gt;&amp;lt;LocationMatch&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;数字大的覆盖数字小的的相同设置&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;除了 &lt;code&gt;&amp;lt;Directory&amp;gt;&lt;/code&gt;，每个组都按它们在配置文件中出现的顺序被依次处理，而 &lt;code&gt;&amp;lt;Directory&amp;gt;&lt;/code&gt; 会按字典顺序由短到长被依次处理。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;例如：&lt;code&gt;&amp;lt;Directory /var/web/dir&amp;gt;&lt;/code&gt; 会先于 &lt;code&gt;&amp;lt;Directory /var/web/dir/subdir&amp;gt;&lt;/code&gt; 被处理。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;如果有多个指向同一个目录的 &lt;code&gt;&amp;lt;Directory&amp;gt;&lt;/code&gt; 段，则按它们在配置文件中的顺序被依次处理。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;用 Include 指令包含进来的配置被视为按原样插入到 Include 指令的位置。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;位于 &lt;code&gt;&amp;lt;VirtualHost&amp;gt;&lt;/code&gt; 容器中的配置段在外部对应的段处理完毕以后再处理，这样就允许虚拟主机覆盖主服务器的设置。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;当请求是由 &lt;code&gt;mod_proxy&lt;/code&gt; 处理的时候，&lt;code&gt;&amp;lt;Proxy&amp;gt;&lt;/code&gt; 容器将会在处理顺序中取代 &lt;code&gt;&amp;lt;Directory&amp;gt;&lt;/code&gt; 容器的位置。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;禁止特定的请求方式&#34;&gt;禁止特定的请求方式&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;Directory \&amp;quot;/apache/www\&amp;quot;&amp;gt;
+&amp;lt;Limit DELETE TRACE OPTIONS&amp;gt;
+    #禁止DELETE TRACE OPTIONS请求
+    Order allow,deny
+    Deny from all
+    &amp;lt;/Limit&amp;gt;
+&amp;lt;/Directory&amp;gt;
+
+&amp;lt;Directory \&amp;quot;/apache/www\&amp;quot;&amp;gt;
+&amp;lt;LimitExcept GET POST HEAD&amp;gt;
+    #禁止除GET POST HEAD以外的请求
+    Order allow,deny
+    Deny from all
+    &amp;lt;/Limit&amp;gt;
+&amp;lt;/Directory&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;日志&#34;&gt;日志&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;LogFormat \&amp;quot;%h %l...\&amp;quot; log_nick_name&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CustomLog log_filename log_nick_name&lt;/code&gt; 应用刚才设置的LogFormat到log_filename&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;日志轮替, Apache 自带的 logrotate&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CustomLog \&amp;quot;|a/b/c/rotate_bin_name log_filename 86400 log_nick_name&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;86400(24h)日志文件清空重记录&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;访问控制&#34;&gt;访问控制&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;Order Deny,Allow&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;先检查 Deny，后检查 Allow。后覆盖前的&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Deny 为空，若 Allow 非空，则除明确允许的，其他拒绝。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Allow 为空，若 Deny 非空，则除明确禁止的，其他允许。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;Order Deny,Allow
+Allow from All  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先 Deny ,Deny 为空，允许全部。后 Allow，仍然是允许全部&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Order Allow,Deny
+Deny from All  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先 Allow ,Allow 为空。后 Deny，Deny 非空并禁止全部，所以没有允许的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Order Deny,Allow
+Deny from ip1 ip2  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先 Deny，禁掉了 ip1，ip2。Allow 时 Deny 非空，除被 Deny 的，其他允许。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Order Allow,Deny  
+Allow from all    
+Deny from ip1 ip2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先 Allow 了全部，后禁止了个别几个&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;以下是错误案例&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Order Deny,Allow  
+Allow from all
+Deny from domain.org  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;想禁止来自domain.org的访问。先 Deny 了 domain.org。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Allow 此时要是为空，则除了 domain.org 其他允许&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;但 Allow 此时非空，允许全部覆盖了之前的禁止，所以失效。&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;2-2-与-2-4-的区别&#34;&gt;2.2 与 2.4 的区别&lt;/h1&gt;
+
+&lt;p&gt;认证：&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;原本使用 &lt;code&gt;Order Deny / Allow&lt;/code&gt; 的方式，改用 Require&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Require all denied
+Require all granted
+Require host xxx.com
+Require ip 192.168.1 192.168.2
+Require local
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+      </item>
+      
+    
+      
+      <item>
+        <title>hello world</title>
+        <link>http://llo.io/post/hello-to-hugo/</link>
+        <pubDate>Sat, 13 Sep 2014 13:53:27 +0800</pubDate>
+        
+        <guid>http://llo.io/post/hello-to-hugo/</guid>
+        <description>&lt;p&gt;Hello World&lt;/p&gt;
+</description>
+      </item>
+      
+    
+  </channel>
+</rss>

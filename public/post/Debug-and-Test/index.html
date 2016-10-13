@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="lin">
+    <meta name="description" content="This is my blog, read it and enjoy.">
+    <meta name="generator" content="Hugo 0.16" />
+
+    
+    <title>Debug and Test &middot; @anewg’s Blog</title>
+
+    <link rel="stylesheet" href="http://llo.io/css/weblog.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/css/lightgallery.min.css" type="text/css" />
+    
+
+
+    
+		<link href="http://llo.io/index.xml" rel="alternate" type="application/rss+xml" title="Blog" />
+		
+  </head>
+  <body class="site">
+
+<header>
+  <nav>
+    <h1><a href="/">@anewg</a>’s Blog.</h1>
+    <div class="menu">
+      
+      <ul>
+        
+            <li>
+              <a href="/post/">Post</a>
+              
+            </li>
+        
+        <li><a href="https://github.com/AnewG">About</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+  <main class="content">
+    <article class="page">
+      <p>
+        <p>chrome:</p>
+
+<pre><code>查找函数定义：在Js调试界面里：`Ctrl + Shift + o`
+
+查找文件：在Js调试界面里：`Ctrl + o`
+
+全局查找：`Cmd + option + f`
+</code></pre>
+
+<p>PHPUnit</p>
+
+<pre><code>多个同时测试
+</code></pre>
+
+<pre><code class="language-php">  class Add
+  {
+      protected $_num1 = 0, $_num2 = 0;
+      public function setNum1($num)
+      {
+          $this-&gt;_num1 = (int) $num;
+      }
+      public function setNum2($num)
+      {
+          $this-&gt;_num2 = (int) $num;
+      }
+      public function getResult()
+      {
+          return $this-&gt;_num1 + $this-&gt;_num2;
+      }
+  }
+</code></pre>
+
+<p>测试源码：</p>
+
+<pre><code class="language-php">  require_once \'PHPUnit/Framework/TestCase.php\';
+  require_once \'Add.php\';
+
+  class AddTest extends PHPUnit_Framework_TestCase
+  {
+      /**
+       * @dataProvider provider
+       */
+      public function testAdd($num1,$num2,$expection)
+      {
+          $add = new Add();
+          $add-&gt;setNum1($num1);
+          $add-&gt;setNum2($num2);
+          $this-&gt;assertEquals($expection,$add-&gt;getResult());
+      }
+
+      public function provider()
+      {
+          return array(
+              array(0,0,0),
+              array(0,1,1),
+              array(1,0,1),
+              array(1,1,3)   //false
+          );
+      }
+  }
+</code></pre>
+
+<p>对应该是错误情况的测试</p>
+
+<pre><code class="language-php">  require_once \'PHPUnit/Framework/TestCase.php\';
+
+  class ExceptionTest extends PHPUnit_Framework_TestCase
+  {
+      /**
+       * @expectedException InvalidArgumentException
+       */
+      public function testException()  //这里的代码应该抛出异常才是通过测试
+      {
+          //throw new IncalidArgumentException(\'Test\'); 有这个通过，没这个false
+      }
+  }
+</code></pre>
+
+<p>执行顺序：</p>
+
+<p><br /></p>
+
+<p><code>setUp() -&gt; func1() -&gt; tearDown() -&gt; setUp() -&gt; func2() ...</code></p>
+
+<p><br /></p>
+
+<p>为每个测试方法准备同一个资源，省去分别在每个函数中建立的成本</p>
+
+<pre><code class="language-php">  require_once \'PHPUnit/Framework.php\';
+
+  class ArrayTest extends PHPUnit_Framework_TestCase
+  {
+      protected $fixture;
+
+      protected function setUp()
+      {
+          $this-&gt;fixture = array();  //不清除的话可以和其他class共用
+      }
+
+      public function func1()
+      {
+      }
+
+      public function func2()
+      {
+      }
+
+      protected function tearDown()
+      {
+          unset($this-&gt;fixture);
+      }
+  }
+</code></pre>
+
+<p>同性质的包组合起来测试</p>
+
+<pre><code class="language-php">  # file Package/Class1Test.php
+  require_once \'PHPUnit/Framework.php\';
+
+  class Package_Class1Test extends PHPUnit_Framework_TestCase
+  {
+      public function test1()
+      {
+         //...
+      }
+
+      public function test2()
+      {
+         //...
+      }
+  }
+
+  # file Package/Class2Test.php
+  require_once \'PHPUnit/Framework.php\';
+
+  class Package_Class2Test extends PHPUnit_Framework_TestCase
+  {
+      public function test3()
+      {
+         //...
+      }
+
+      public function test4()
+      {
+         //...
+      }
+  }
+</code></pre>
+
+<p>测试源码：</p>
+
+<pre><code class="language-php">  require_once \'PHPUnit/Framework/TestCase.php\';
+  require_once \'Package/Class1Test.php\';
+  require_once \'Package/Class2Test.php\';
+
+  class AddTest extends PHPUnit_Framework_TestCase
+  {
+      public static function suite()
+      {
+          $suite = new PHPUnit_Framework_TestSuite(\'Package\');
+          $suite-&gt;addTestSuite(\'Package_Class1Test\');
+          $suite-&gt;addTestSuite(\'Package_Class2Test\');
+          return $suite;
+      }
+
+      protected function setUp()
+      {
+          $this-&gt;fixture = array();
+      }
+
+      protected function tearDown()
+      {
+          unset($this-&gt;fixture);    //这里的setUp和tearDown是在最开始和最后执行的，各个文件中的setUp和tearDown在其中运行
+      }
+  }
+</code></pre>
+
+<p>PHPUnit中，注解也是有用处的。</p>
+
+<p><br /></p>
+
+<p>备用套件：SimpleTest</p>
+
+      </p>
+    </article>
+  </main>
+
+<footer>
+  <div class="footer_text">
+      <div>
+        <h3>Hi, <a href="https://github.com/AnewG">I'm lin</a></h3>
+        <p>
+          Web developer, Xiamen
+
+        </p>
+      </div>
+      <div>
+          <h3>&nbsp;</h3>
+          
+        </div>
+      </div>
+  </div>
+
+  
+    <div class="footer_copyright">
+      &copy; 2016 <a href="https://github.com/AnewG">lin zhizhong</a>
+       - Made in Xiamen, Software Park
+    </div>
+  
+</footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/js/lightgallery-all.min.js" charset="utf-8"></script>
+    <script src="/js/weblog.js" charset="utf-8"></script>
+    
+
+    
+
+    
+  </body>
+</html>
+

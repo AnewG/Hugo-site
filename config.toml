@@ -1,0 +1,23 @@
+baseurl = "http://llo.io/"
+languageCode = "en-us"
+title = "Blog"
+theme = "internet-weblog"
+Paginate = 10
+SectionPagesMenu = "main"
+
+[author]
+	Handle = "anewg"
+	FirstName = "lin"
+	LastName = "zhizhong"
+	AboutPage = "https://github.com/AnewG"
+	Location = "Xiamen, Software Park"
+
+[params]
+	Description = "This is my blog, read it and enjoy."
+	ShowCopyright = true
+	RSSEnabled = true
+
+[taxonomies]
+	tag = "tags"
+	category = "categories"
+	series = "series"

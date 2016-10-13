@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="lin">
+    <meta name="description" content="This is my blog, read it and enjoy.">
+    <meta name="generator" content="Hugo 0.16" />
+
+    
+    <title>git &middot; @anewg’s Blog</title>
+
+    <link rel="stylesheet" href="http://llo.io/css/weblog.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/css/lightgallery.min.css" type="text/css" />
+    
+
+
+    
+		<link href="http://llo.io/index.xml" rel="alternate" type="application/rss+xml" title="Blog" />
+		
+  </head>
+  <body class="site">
+
+<header>
+  <nav>
+    <h1><a href="/">@anewg</a>’s Blog.</h1>
+    <div class="menu">
+      
+      <ul>
+        
+            <li>
+              <a href="/post/">Post</a>
+              
+            </li>
+        
+        <li><a href="https://github.com/AnewG">About</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+  <main class="content">
+    <article class="page">
+      <p>
+        
+
+<p>设置git默认编辑器：</p>
+
+<p><br /></p>
+
+<p><code>git config --global core.editor \&quot;/usr/local/bin/vim\&quot;</code></p>
+
+<p><br /></p>
+
+<p>全局设置：</p>
+
+<pre><code>git config --global user.name xxx ；
+git config --global user.email \&quot;xxx@xxx.com\&quot;
+</code></pre>
+
+<p>要忽略的文件：<code>.gitignore</code></p>
+
+<h2 id="基本">基本</h2>
+
+<p><code>git init</code> 新仓库</p>
+
+<p><code>git clone /path/to/repository [repository_dir_name]</code></p>
+
+<p><code>git status</code> –&gt; 查看当前缓冲区状态 或 查看哪些文件出现冲突</p>
+
+<p><code>git mv oldfile.txt newfile.txt</code> 缓冲区和工作目录同时更改</p>
+
+<p><code>git show HEAD~4</code> 查看 前前前前 一版修改的資料</p>
+
+<p><code>git blame filename</code> 查看文件修改记录</p>
+
+<p><code>git add .(*|filename)</code>  add将内容读入暂存区。修改完冲突也要add，才会记录到stage。</p>
+
+<p><code>git rm --cached FILENAME</code>  取消跟踪但不删除工作目录的文件</p>
+
+<p><br /></p>
+
+<p>扩展：</p>
+
+<p><code>git add -u</code> 只加修改過的檔案, 新增的檔案不加入.</p>
+
+<p><code>git add -i</code> 進入交互模式</p>
+
+<p><code>git commit -m \&quot;代码提交信息\&quot;</code> 此时已经在本地的HEAD，但未提交到远端</p>
+
+<p><code>git commit --amend</code> 修改上一次的 commit 訊息。</p>
+
+<p><code>git commit --amend 檔案1 檔案2...</code> 將檔案1、檔案2加入上一次的 commit。</p>
+
+<h2 id="分支">分支</h2>
+
+<p><code>git checkout -b somename</code>  创建分支并立即切换过去</p>
+
+<p><code>git branch -d deletename</code>  强制删除分支</p>
+
+<p><code>git branch -f master HEAD~3</code> 单独前移某分支(当前 HEAD 不变)</p>
+
+<p><br /></p>
+
+<p>扩展：</p>
+
+<p><code>git branch</code> 列出目前有多少分支</p>
+
+<p><code>git branch new-branch master</code> 由 master 產生新的 branch</p>
+
+<p><code>git diff &lt;source_branch&gt; &lt;target_branch&gt;</code></p>
+
+<p><code>git merge &lt;branch&gt;</code> 合并某分支到当前所在分支</p>
+
+<h2 id="比较">比较</h2>
+
+<p><code>git diff --cached</code> 比較 staging area 與 Repository 差異</p>
+
+<p><code>git diff HEAD</code> 比較目前位置(工作目录) 與 Repository 差別</p>
+
+<h2 id="rebase">rebase：</h2>
+
+<pre><code>$ git checkout A
+$ git rebase B
+</code></pre>
+
+<p>A以B作为基点，命令会把你的A分支里的每个提交(commit)取消掉，并且把它们临时保存为补丁(patch),切到”B”分支，最后把保存的这些补丁应用到”B”分支上。</p>
+
+<p><br /></p>
+
+<p><code>$ git rebase --abort</code> A分支会回到rebase开始前的状态。</p>
+
+<p><br /></p>
+
+<p>rebase过程中的冲突解决：</p>
+
+<pre><code>git add -u
+git rebase --continue
+</code></pre>
+
+<p>有冲突继续解决，重复这这些步骤，直到rebase完成。</p>
+
+<h2 id="远程">远程</h2>
+
+<p><code>git pull</code> 拉远端数据之后合并更新</p>
+
+<p><code>git remote -v</code> 查看远端分支在本地的情况</p>
+
+<h2 id="冲突">冲突</h2>
+
+<p>解决冲突后 <code>git add &lt;filename&gt;</code></p>
+
+<h2 id="标签">标签</h2>
+
+<p><code>git tag 1.0.0 1b2e1d63ff(ID)</code>  获取ID用 <code>git log</code>命令</p>
+
+<h2 id="回退">回退</h2>
+
+<p><code>git revert HEAD</code>  回复工作目录到上次提交时，commit增加一项 revert 的记录，相当与一次新提交</p>
+
+<pre><code>git fetch origin;
+git reset --hard origin/master 
+</code></pre>
+
+<p>彻底刷新成远端服务器最新版本（origin那里的master），丢弃本地</p>
+
+<p><br /></p>
+
+<p><code>git ls-files -d</code> 查看已刪除的檔案</p>
+
+<p><code>git ls-files -d | xargs git checkout --</code>  將已刪除的檔案還原</p>
+
+<p><br /></p>
+
+<p>扩展：</p>
+
+<p><br /></p>
+
+<p>缓存区就是提交时要发送的文件（附带文件的更改） 或 要发送的文件的当前状态（未提交时）</p>
+
+<p><br /></p>
+
+<p><code>git checkout HEAD(-f) hello.txt</code> 从指定commit中检出，工作目录变化。</p>
+
+<p><code>git checkout (—) hello.txt</code> 从缓存区取得（add但没commit的数据），缓存区没变。</p>
+
+<p><code>git reset --mixed</code> 本地文件未发生改变（<code>—hard</code> 时才会），缓存区和commit变化</p>
+
+<p><code>git reset --soft</code> 只恢复 commit,而保留 (当前)工作目录 和 (当前)缓存区 的状态</p>
+
+<p><code>git reset --hard</code> 彻底回复</p>
+
+<p><br /></p>
+
+<p>扩展：</p>
+
+<p>在之前的版本创建分支 <code>git branch test_branch -v old_commit_id</code></p>
+
+<pre><code>git reflog；
+git checkout some_commit_id
+</code></pre>
+
+<h2 id="grep">Grep</h2>
+
+<p><code>git grep \&quot;te\&quot; v1</code>  查 v1 是否有 “te” 的字串</p>
+
+<p><code>git grep \&quot;te\&quot;</code> 查現在版本是否有 “te” 的字串</p>
+
+<h2 id="二分排错法">二分排错法</h2>
+
+<pre><code>git bisect start
+git bisect good f608824 //first commit
+git bisect bad master   //HEAD
+</code></pre>
+
+<p>会转到两者之间的提交点，如果检查没错输入 <code>git bisect good</code> 反之输入 <code>git bisect bad</code> 继续二分下去</p>
+
+<h2 id="cherry-pick">cherry-pick：</h2>
+
+<p>From:</p>
+
+<pre><code>A-B  master
+   \\
+    C-D-E-F-G topic
+</code></pre>
+
+<p>To:</p>
+
+<pre><code>A-B-D-F  master
+       \\
+        C-E-G topic
+</code></pre>
+
+<p>以上的实现步骤：</p>
+
+<pre><code>git checkout master
+git cherry-pick D
+git cherry-pick F
+git checkout topic
+git rebase master
+</code></pre>
+
+<h2 id="暫存操作-stash">暫存操作(stash)</h2>
+
+<p><code>git stash</code> 將目前所做的修改都暫存起來。</p>
+
+<p><code>git stash apply</code> 取出最新一次的暫存。</p>
+
+<p><code>git stash pop</code> 取出最新一次的暫存並將他從暫存清單中移除。</p>
+
+<p><code>git stash list</code> 顯示出所有的暫存清單。</p>
+
+<p><code>git stash clear</code> 清除所有暫存。</p>
+
+      </p>
+    </article>
+  </main>
+
+<footer>
+  <div class="footer_text">
+      <div>
+        <h3>Hi, <a href="https://github.com/AnewG">I'm lin</a></h3>
+        <p>
+          Web developer, Xiamen
+
+        </p>
+      </div>
+      <div>
+          <h3>&nbsp;</h3>
+          
+        </div>
+      </div>
+  </div>
+
+  
+    <div class="footer_copyright">
+      &copy; 2016 <a href="https://github.com/AnewG">lin zhizhong</a>
+       - Made in Xiamen, Software Park
+    </div>
+  
+</footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/js/lightgallery-all.min.js" charset="utf-8"></script>
+    <script src="/js/weblog.js" charset="utf-8"></script>
+    
+
+    
+
+    
+  </body>
+</html>
+

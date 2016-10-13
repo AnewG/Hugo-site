@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="lin">
+    <meta name="description" content="This is my blog, read it and enjoy.">
+    <meta name="generator" content="Hugo 0.16" />
+
+    
+    <title>javascript &middot; @anewg’s Blog</title>
+
+    <link rel="stylesheet" href="http://llo.io/css/weblog.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/css/lightgallery.min.css" type="text/css" />
+    
+
+
+    
+		<link href="http://llo.io/index.xml" rel="alternate" type="application/rss+xml" title="Blog" />
+		
+  </head>
+  <body class="site">
+
+<header>
+  <nav>
+    <h1><a href="/">@anewg</a>’s Blog.</h1>
+    <div class="menu">
+      
+      <ul>
+        
+            <li>
+              <a href="/post/">Post</a>
+              
+            </li>
+        
+        <li><a href="https://github.com/AnewG">About</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+  <main class="content">
+    <article class="page">
+      <p>
+        
+
+<h1 id="原型链">原型链</h1>
+
+<p><img src="/image/prototype.jpg" alt="javascript" /></p>
+
+<p>图片来自：<a href="https://github.com/kzangv">kzangv</a></p>
+
+<h3 id="图片说明">图片说明</h3>
+
+<hr />
+
+<h4 id="总共三类对象-蓝色大框">总共三类对象(蓝色大框)</h4>
+
+<p>1.<strong>实例对象</strong>（通过new XX() 所得到的实例），跟原型链相关的只有 <code>__proto__</code> 属性，指向其对应的原型对象 <code>*.prototype</code> 。</p>
+
+<p><br /></p>
+
+<p>2.<strong>构造函数对象</strong> 分原生和自定义两类。跟原型链相关的有 <code>__proto__</code> 属性，除此之外还有 <code>prototype</code> 属性。<code>__proto__</code> 属性都是指向 <code>Function.prototype</code> 这个原型对象的。<code>prototype</code> 则是指向对应的原型对象。</p>
+
+<p><br /></p>
+
+<p>3.<strong>原型对象</strong> 除了一样拥有 <code>__proto__</code> 外，也拥有独有的属性 <code>constructor</code> 。它的<code>__proto__</code> 指向的都是 <code>Object.prototype</code> ，除了 <code>Object.prototype</code> 本身，它自己是指向 <code>null</code> 。而 <code>constructor</code> 属性指向它们对应的构造函数对象。</p>
+
+<p><br /></p>
+
+<h1 id="arguments-参数">arguments 参数</h1>
+
+<p>它是对象，不是数组，使用 <code>Array.prototype.slice.call(arguments)</code> 转为数组</p>
+
+      </p>
+    </article>
+  </main>
+
+<footer>
+  <div class="footer_text">
+      <div>
+        <h3>Hi, <a href="https://github.com/AnewG">I'm lin</a></h3>
+        <p>
+          Web developer, Xiamen
+
+        </p>
+      </div>
+      <div>
+          <h3>&nbsp;</h3>
+          
+        </div>
+      </div>
+  </div>
+
+  
+    <div class="footer_copyright">
+      &copy; 2016 <a href="https://github.com/AnewG">lin zhizhong</a>
+       - Made in Xiamen, Software Park
+    </div>
+  
+</footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/js/lightgallery-all.min.js" charset="utf-8"></script>
+    <script src="/js/weblog.js" charset="utf-8"></script>
+    
+
+    
+
+    
+  </body>
+</html>
+

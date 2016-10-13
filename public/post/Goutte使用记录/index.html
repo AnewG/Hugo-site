@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="lin">
+    <meta name="description" content="This is my blog, read it and enjoy.">
+    <meta name="generator" content="Hugo 0.16" />
+
+    
+    <title>Goutte使用记录 &middot; @anewg’s Blog</title>
+
+    <link rel="stylesheet" href="http://llo.io/css/weblog.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/css/lightgallery.min.css" type="text/css" />
+    
+
+
+    
+		<link href="http://llo.io/index.xml" rel="alternate" type="application/rss+xml" title="Blog" />
+		
+  </head>
+  <body class="site">
+
+<header>
+  <nav>
+    <h1><a href="/">@anewg</a>’s Blog.</h1>
+    <div class="menu">
+      
+      <ul>
+        
+            <li>
+              <a href="/post/">Post</a>
+              
+            </li>
+        
+        <li><a href="https://github.com/AnewG">About</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+  <main class="content">
+    <article class="page">
+      <p>
+        <p>工作项目需要把前端抓取网页的部分改写到后端抓取，使用了 Goutte。</p>
+
+<ol>
+<li>设置header</li>
+</ol>
+
+<pre><code class="language-php">      $header = array(\'Origin: http://www.meilishuo.com\');
+      $this-&gt;goutte_client-&gt;getClient()-&gt;setDefaultOption(\'config/curl/\'.CURLOPT_HTTPHEADER, $header);
+      // 与 curl 设置类似
+      $crawler = $this-&gt;goutte_client-&gt;request(\'GET\', $url);
+</code></pre>
+
+<ol>
+<li>过滤元素</li>
+</ol>
+
+<pre><code class="language-php">      $title = $crawler-&gt;filter(\'title\')-&gt;eq(0)-&gt;text(); // 支持选择器写法
+      $html = $crawler-&gt;html(); // 获取全部html
+</code></pre>
+
+<ol>
+<li>模拟点击与提交表单</li>
+</ol>
+
+<pre><code class="language-php">      $login_url = \'http://login.m.taobao.com/login.htm?v=0&amp;ttid=h5\';
+
+      $crawler = $this-&gt;goutte_client-&gt;request(\'GET\', $login_url);
+      $form = $crawler-&gt;selectButton(\'登 录\')-&gt;form();
+      $crawler = $this-&gt;goutte_client-&gt;submit($form, array(\'TPL_username\' =&gt; \'x\', \'TPL_password\' =&gt; \'y\'));
+
+      var_dump($this-&gt;goutte_client-&gt;getCookieJar());
+      var_dump($this-&gt;goutte_client-&gt;getResponse()-&gt;getHeaders());
+</code></pre>
+
+<p>像淘宝这种登录前要跑js的还是没辙，需要CasperJS 或 Selenium。</p>
+
+      </p>
+    </article>
+  </main>
+
+<footer>
+  <div class="footer_text">
+      <div>
+        <h3>Hi, <a href="https://github.com/AnewG">I'm lin</a></h3>
+        <p>
+          Web developer, Xiamen
+
+        </p>
+      </div>
+      <div>
+          <h3>&nbsp;</h3>
+          
+        </div>
+      </div>
+  </div>
+
+  
+    <div class="footer_copyright">
+      &copy; 2016 <a href="https://github.com/AnewG">lin zhizhong</a>
+       - Made in Xiamen, Software Park
+    </div>
+  
+</footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/js/lightgallery-all.min.js" charset="utf-8"></script>
+    <script src="/js/weblog.js" charset="utf-8"></script>
+    
+
+    
+
+    
+  </body>
+</html>
+

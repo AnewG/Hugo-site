@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="lin">
+    <meta name="description" content="This is my blog, read it and enjoy.">
+    <meta name="generator" content="Hugo 0.16" />
+
+    
+    <title>apache &middot; @anewg’s Blog</title>
+
+    <link rel="stylesheet" href="http://llo.io/css/weblog.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/css/lightgallery.min.css" type="text/css" />
+    
+
+
+    
+		<link href="http://llo.io/index.xml" rel="alternate" type="application/rss+xml" title="Blog" />
+		
+  </head>
+  <body class="site">
+
+<header>
+  <nav>
+    <h1><a href="/">@anewg</a>’s Blog.</h1>
+    <div class="menu">
+      
+      <ul>
+        
+            <li>
+              <a href="/post/">Post</a>
+              
+            </li>
+        
+        <li><a href="https://github.com/AnewG">About</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+  <main class="content">
+    <article class="page">
+      <p>
+        
+
+<h1 id="ubuntu-下的命令">Ubuntu 下的命令：</h1>
+
+<p><br /></p>
+
+<p>切换模块
+<br /></p>
+
+<pre><code>`sudo a2enmod rewrite`  开启 apache 的 rewrite 功能
+`sudo a2dismod rewrite` 禁用模块
+</code></pre>
+
+<p>切换站点</p>
+
+<pre><code>`a2ensite sites-available里的文件名`
+`a2dissite sites-available里的文件名`
+</code></pre>
+
+<p>控制命令 apachectl or httpd</p>
+
+<pre><code>`apachectl -k graceful` – 平滑重启
+`apachectl -k graceful-stop` – 平滑停止
+`httpd -v` 显示当前服务器版本
+`httpd -V` 显示编译apache时的编译设定
+`httpd -l` 显示已编译进apache内核的模块
+`httpd -f ./config.conf` 以指定的配置文件启动
+`httpd -L` 显示有效的配置文件**指令**清单
+`httpd -D` 附加参数 附带附加参数启动 `&lt;IfDefine&gt;&lt;/IfDefine&gt;`
+`apachectl configtest` 测试配置文件
+</code></pre>
+
+<p><br /></p>
+
+<h1 id="指令处理顺序">指令处理顺序</h1>
+
+<ol>
+<li><code>&lt;Directory&gt;</code>(除了正则表达式)和<code>.htaccess</code></li>
+<li><code>&lt;DirectoryMatch&gt;</code>(和<code>&lt;Directory ~&gt;</code>)</li>
+<li><code>&lt;Files&gt;</code>和<code>&lt;FilesMatch&gt;</code></li>
+<li><code>&lt;Location&gt;</code>和<code>&lt;LocationMatch&gt;</code></li>
+</ol>
+
+<p>数字大的覆盖数字小的的相同设置</p>
+
+<p><br /></p>
+
+<p>除了 <code>&lt;Directory&gt;</code>，每个组都按它们在配置文件中出现的顺序被依次处理，而 <code>&lt;Directory&gt;</code> 会按字典顺序由短到长被依次处理。</p>
+
+<p><br /></p>
+
+<p>例如：<code>&lt;Directory /var/web/dir&gt;</code> 会先于 <code>&lt;Directory /var/web/dir/subdir&gt;</code> 被处理。</p>
+
+<p><br /></p>
+
+<p>如果有多个指向同一个目录的 <code>&lt;Directory&gt;</code> 段，则按它们在配置文件中的顺序被依次处理。</p>
+
+<p><br /></p>
+
+<p>用 Include 指令包含进来的配置被视为按原样插入到 Include 指令的位置。</p>
+
+<p><br /></p>
+
+<p>位于 <code>&lt;VirtualHost&gt;</code> 容器中的配置段在外部对应的段处理完毕以后再处理，这样就允许虚拟主机覆盖主服务器的设置。</p>
+
+<p><br /></p>
+
+<p>当请求是由 <code>mod_proxy</code> 处理的时候，<code>&lt;Proxy&gt;</code> 容器将会在处理顺序中取代 <code>&lt;Directory&gt;</code> 容器的位置。</p>
+
+<p><br /></p>
+
+<h1 id="禁止特定的请求方式">禁止特定的请求方式</h1>
+
+<pre><code>&lt;Directory \&quot;/apache/www\&quot;&gt;
+&lt;Limit DELETE TRACE OPTIONS&gt;
+    #禁止DELETE TRACE OPTIONS请求
+    Order allow,deny
+    Deny from all
+    &lt;/Limit&gt;
+&lt;/Directory&gt;
+
+&lt;Directory \&quot;/apache/www\&quot;&gt;
+&lt;LimitExcept GET POST HEAD&gt;
+    #禁止除GET POST HEAD以外的请求
+    Order allow,deny
+    Deny from all
+    &lt;/Limit&gt;
+&lt;/Directory&gt;
+</code></pre>
+
+<p><br /></p>
+
+<h1 id="日志">日志</h1>
+
+<p><code>LogFormat \&quot;%h %l...\&quot; log_nick_name</code></p>
+
+<p><code>CustomLog log_filename log_nick_name</code> 应用刚才设置的LogFormat到log_filename</p>
+
+<p><br /></p>
+
+<p>日志轮替, Apache 自带的 logrotate</p>
+
+<p><code>CustomLog \&quot;|a/b/c/rotate_bin_name log_filename 86400 log_nick_name</code></p>
+
+<p><br /></p>
+
+<p>86400(24h)日志文件清空重记录</p>
+
+<p><br /></p>
+
+<h1 id="访问控制">访问控制</h1>
+
+<p><code>Order Deny,Allow</code></p>
+
+<p><br /></p>
+
+<p>先检查 Deny，后检查 Allow。后覆盖前的</p>
+
+<ul>
+<li><p>Deny 为空，若 Allow 非空，则除明确允许的，其他拒绝。</p></li>
+
+<li><p>Allow 为空，若 Deny 非空，则除明确禁止的，其他允许。</p></li>
+</ul>
+
+<pre><code>Order Deny,Allow
+Allow from All  
+</code></pre>
+
+<p>先 Deny ,Deny 为空，允许全部。后 Allow，仍然是允许全部</p>
+
+<pre><code>Order Allow,Deny
+Deny from All  
+</code></pre>
+
+<p>先 Allow ,Allow 为空。后 Deny，Deny 非空并禁止全部，所以没有允许的。</p>
+
+<pre><code>Order Deny,Allow
+Deny from ip1 ip2  
+</code></pre>
+
+<p>先 Deny，禁掉了 ip1，ip2。Allow 时 Deny 非空，除被 Deny 的，其他允许。</p>
+
+<pre><code class="language-bash">Order Allow,Deny  
+Allow from all    
+Deny from ip1 ip2
+</code></pre>
+
+<p>先 Allow 了全部，后禁止了个别几个</p>
+
+<p><br /></p>
+
+<p>以下是错误案例</p>
+
+<pre><code class="language-bash">Order Deny,Allow  
+Allow from all
+Deny from domain.org  
+</code></pre>
+
+<p>想禁止来自domain.org的访问。先 Deny 了 domain.org。</p>
+
+<p><br /></p>
+
+<p>Allow 此时要是为空，则除了 domain.org 其他允许</p>
+
+<p><br /></p>
+
+<p>但 Allow 此时非空，允许全部覆盖了之前的禁止，所以失效。</p>
+
+<p><br /></p>
+
+<h1 id="2-2-与-2-4-的区别">2.2 与 2.4 的区别</h1>
+
+<p>认证：</p>
+
+<p><br /></p>
+
+<p>原本使用 <code>Order Deny / Allow</code> 的方式，改用 Require</p>
+
+<pre><code class="language-bash">Require all denied
+Require all granted
+Require host xxx.com
+Require ip 192.168.1 192.168.2
+Require local
+</code></pre>
+
+      </p>
+    </article>
+  </main>
+
+<footer>
+  <div class="footer_text">
+      <div>
+        <h3>Hi, <a href="https://github.com/AnewG">I'm lin</a></h3>
+        <p>
+          Web developer, Xiamen
+
+        </p>
+      </div>
+      <div>
+          <h3>&nbsp;</h3>
+          
+        </div>
+      </div>
+  </div>
+
+  
+    <div class="footer_copyright">
+      &copy; 2016 <a href="https://github.com/AnewG">lin zhizhong</a>
+       - Made in Xiamen, Software Park
+    </div>
+  
+</footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/js/lightgallery-all.min.js" charset="utf-8"></script>
+    <script src="/js/weblog.js" charset="utf-8"></script>
+    
+
+    
+
+    
+  </body>
+</html>
+

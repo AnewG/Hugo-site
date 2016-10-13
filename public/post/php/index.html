@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="lin">
+    <meta name="description" content="This is my blog, read it and enjoy.">
+    <meta name="generator" content="Hugo 0.16" />
+
+    
+    <title>php &middot; @anewg’s Blog</title>
+
+    <link rel="stylesheet" href="http://llo.io/css/weblog.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/css/lightgallery.min.css" type="text/css" />
+    
+
+
+    
+		<link href="http://llo.io/index.xml" rel="alternate" type="application/rss+xml" title="Blog" />
+		
+  </head>
+  <body class="site">
+
+<header>
+  <nav>
+    <h1><a href="/">@anewg</a>’s Blog.</h1>
+    <div class="menu">
+      
+      <ul>
+        
+            <li>
+              <a href="/post/">Post</a>
+              
+            </li>
+        
+        <li><a href="https://github.com/AnewG">About</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+  <main class="content">
+    <article class="page">
+      <p>
+        
+
+<h1 id="session">Session</h1>
+
+<p>设置个30分钟的session:</p>
+
+<p><br /></p>
+
+<p>1.设置php.ini的session.gc_maxlifetime</p>
+
+<p><br /></p>
+
+<p>但是PHP是用一定的概率来运行session的gc，不能保证一定运行，而且假设5分钟前设置了一个a=1, 5分钟后又设置了一个b=2, 那么这个Session文件的修改时间为添加b时刻的时间, 那么a就不能在30分钟的时候被清除。还有，如果有俩个应用都没有指定自己独立的save_path（两个都存在默认路径）, 一个设置了过期时间为2分钟(假设为A), 一个设置为30分钟(假设为B), 那么每次当A的Session gc运行的时候, 就会同时删除属于应用B的Session files.</p>
+
+<p><br /></p>
+
+<p>2.设置session载体cookie，session.cookie_lifetime</p>
+
+<p><br /></p>
+
+<p>但可以被抓包后修改发送，不严谨.</p>
+
+<p><br /></p>
+
+<p>3.自己为每一个Session值增加Time stamp.每次访问之前, 判断时间戳.</p>
+
+<p><br /></p>
+
+<h1 id="二进制安全">二进制安全</h1>
+
+<p>「binary safe」 的函数会把它的输入字符串原封不动的进行处理；</p>
+
+<p><br /></p>
+
+<p>而非 「binary safe」 的函数是在底层直接调用C的字符串相关的函数，而这些函数处理字符串会把NULL后边的内容忽略掉。</p>
+
+<p><br /></p>
+
+<p>如果函数strlen是binary safe的话，我们将得到7；如果函数是非binary safe的话，我们将得到3</p>
+
+<pre><code>==================================
+$str = \&quot;abcx00abc\&quot;; //x00为NULL
+echo strlen($str);  //7
+==================================
+</code></pre>
+
+<p><br /></p>
+
+<h1 id="require-include">Require &amp; Include</h1>
+
+<p>首次判断是否绝对路径， 如果是则跳过include_path进行解析</p>
+
+<p><br /></p>
+
+<p>再次判断是否相对路径 （./file, ../dir/file），基点永远是当前工作目录（运行脚本的目录)</p>
+
+<p><br /></p>
+
+<p>最后判断include_path列表</p>
+
+<p><br /></p>
+
+<h1 id="正则表达式">正则表达式</h1>
+
+<p><code>#(?&lt;=c)d(?=e)#</code> &nbsp;&nbsp;d前面紧跟c, d 后面紧跟e，满足的string匹配出d</p>
+
+<p><br /></p>
+
+<h1 id="sso">SSO</h1>
+
+<p>每个站点, 设置用户验证中心（<code>center.php</code>）</p>
+
+<p><br /></p>
+
+<p>在A站登录成功后，跳转到A站的 <code>center.php</code> 设置 <code>token</code>(cookie为载体），并将信息入库</p>
+
+<p><br /></p>
+
+<p>在 <code>center.php</code> 的 html 部分，向其他站（如B站，C站&hellip;）的对应处理中心（<code>client.php</code>）发送 <code>get</code> 请求（iframe 为载体），附带 <code>token</code> 参数</p>
+
+<p><br /></p>
+
+<p>其他站的<code>client.php</code> 接收到 <code>token</code> 后（可经数据库）验证，成功后在 iframe 内设置该站的 cookie</p>
+
+<p><br /></p>
+
+<p>PS：IE下要加P3P头</p>
+
+<p><br /></p>
+
+<h1 id="生成base64">生成Base64</h1>
+
+<pre><code>function data_uri($file, $mime) {
+  $contents=file_get_contents($file);
+  $base64=base64_encode($contents);
+  echo \&quot;data:$mime;base64,$base64\&quot;;
+}
+</code></pre>
+
+      </p>
+    </article>
+  </main>
+
+<footer>
+  <div class="footer_text">
+      <div>
+        <h3>Hi, <a href="https://github.com/AnewG">I'm lin</a></h3>
+        <p>
+          Web developer, Xiamen
+
+        </p>
+      </div>
+      <div>
+          <h3>&nbsp;</h3>
+          
+        </div>
+      </div>
+  </div>
+
+  
+    <div class="footer_copyright">
+      &copy; 2016 <a href="https://github.com/AnewG">lin zhizhong</a>
+       - Made in Xiamen, Software Park
+    </div>
+  
+</footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.2.14/js/lightgallery-all.min.js" charset="utf-8"></script>
+    <script src="/js/weblog.js" charset="utf-8"></script>
+    
+
+    
+
+    
+  </body>
+</html>
+
